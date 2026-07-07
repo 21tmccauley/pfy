@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Tooling caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.import_linter_cache/
+
+# MkDocs build output (published by CI, never committed)
+site/
+
+# Local secrets + customer data
+.env
+bundles/
+reports/

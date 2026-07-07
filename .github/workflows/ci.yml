@@ -1,0 +1,31 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # paramify-sdk is a private repo. Give Actions a read token so pip can
+      # install the git-pinned dependency. Store it as a repo/org secret.
+      # - name: Auth to private SDK
+      #   run: git config --global url."https://x-access-token:${{ secrets.SDK_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Lint / type / boundaries / tests
+        run: |
+          ruff check .
+          mypy
+          lint-imports
+          pytest -q

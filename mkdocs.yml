@@ -1,0 +1,53 @@
+site_name: pfy — Paramify FDE CLI
+site_description: Porcelain workflows + plumbing primitives over the Paramify SDK.
+# TODO(you): confirm these two once the repo/Pages location is fixed.
+site_url: https://paramify.github.io/pfy/
+repo_url: https://github.com/paramify/pfy
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.instant
+    - content.code.copy
+    - content.action.edit
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - tables
+  - attr_list
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Setup: setup.md
+  - Concepts: concepts.md
+  - Workflows:
+      - Evidence coverage: workflows/evidence-coverage.md
+      - Validator triage: workflows/validator-triage.md
+  - CLI reference: cli-reference.md

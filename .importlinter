@@ -1,0 +1,17 @@
+# The one boundary we enforce as a hard CI check (`lint-imports`).
+#
+# `core` is the pure, promotable capability (vuln scoring/selection/deviation
+# planning, validator replay/diff). `app` is everything that touches the outside
+# world (SDK + NVD clients, settings, output, orchestration, the Typer CLI).
+# `core` must never import `app` — that keeps each capability liftable to a
+# schedule, the platform, or the product without dragging transport/CLI along.
+[importlinter]
+root_package = pfy
+
+[importlinter:contract:core-stays-pure]
+name = core stays pure — no imports from app
+type = forbidden
+source_modules =
+    pfy.core
+forbidden_modules =
+    pfy.app
