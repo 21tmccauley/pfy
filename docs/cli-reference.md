@@ -16,244 +16,17 @@ $ pfy [OPTIONS] COMMAND [ARGS]...
 
 **Commands**:
 
-* `api`: Raw request to any endpoint (escape hatch).
-* `programs`: Programs/projects (plumbing).
-* `issues`: Issues + inline deviations (plumbing).
-* `deviations`: Create/update deviations (plumbing).
-* `evidence`: Evidence sets + validator coverage.
-* `vuln`: CVSS scoring + deviation sync (porcelain).
+* `vuln`: CVSS scoring + deviation sync.
 * `validator`: Triage failing validators.
-
-## `pfy api`
-
-Raw request to any endpoint (escape hatch).
-
-**Usage**:
-
-```console
-$ pfy api [OPTIONS] METHOD PATH
-```
-
-**Arguments**:
-
-* `METHOD`: HTTP method, e.g. GET, POST, PATCH  [required]
-* `PATH`: Path relative to the base URL, e.g. 'issues'  [required]
-
-**Options**:
-
-* `-p, --param TEXT`: Query param key=value (repeatable)
-* `--stdin`: Read a JSON request body from stdin
-* `--help`: Show this message and exit.
-
-## `pfy programs`
-
-Programs/projects (plumbing).
-
-**Usage**:
-
-```console
-$ pfy programs [OPTIONS] COMMAND [ARGS]...
-```
-
-**Options**:
-
-* `--help`: Show this message and exit.
-
-**Commands**:
-
-* `list`: List programs: id and name.
-* `get`: Get one program by id.
-
-### `pfy programs list`
-
-List programs: id and name.
-
-**Usage**:
-
-```console
-$ pfy programs list [OPTIONS]
-```
-
-**Options**:
-
-* `--json`: Emit JSON instead of text.
-* `--help`: Show this message and exit.
-
-### `pfy programs get`
-
-Get one program by id.
-
-**Usage**:
-
-```console
-$ pfy programs get [OPTIONS] PROGRAM_ID
-```
-
-**Arguments**:
-
-* `PROGRAM_ID`: Program id  [required]
-
-**Options**:
-
-* `--json`: Emit JSON instead of text.
-* `--help`: Show this message and exit.
-
-## `pfy issues`
-
-Issues + inline deviations (plumbing).
-
-**Usage**:
-
-```console
-$ pfy issues [OPTIONS] COMMAND [ARGS]...
-```
-
-**Options**:
-
-* `--help`: Show this message and exit.
-
-**Commands**:
-
-* `list`: List issues.
-* `get`: Get one issue (with its inline deviations)...
-
-### `pfy issues list`
-
-List issues. Needs a scope: program id (or PROGRAM_ID), poam id, or cve id.
-
-**Usage**:
-
-```console
-$ pfy issues list [OPTIONS]
-```
-
-**Options**:
-
-* `--program-id TEXT`: Defaults to PROGRAM_ID
-* `--poam-id TEXT`: POA&amp;M id (repeatable)
-* `--cve-id TEXT`: CVE id (repeatable)
-* `--kev`: Only KEV vulnerabilities
-* `--has-cves`: Only issues carrying CVE ids
-* `--json`: Emit JSON instead of text.
-* `--help`: Show this message and exit.
-
-### `pfy issues get`
-
-Get one issue (with its inline deviations) by id.
-
-**Usage**:
-
-```console
-$ pfy issues get [OPTIONS] ISSUE_ID
-```
-
-**Arguments**:
-
-* `ISSUE_ID`: Issue id  [required]
-
-**Options**:
-
-* `--json`: Emit JSON instead of text.
-* `--help`: Show this message and exit.
-
-## `pfy deviations`
-
-Create/update deviations (plumbing).
-
-**Usage**:
-
-```console
-$ pfy deviations [OPTIONS] COMMAND [ARGS]...
-```
-
-**Options**:
-
-* `--help`: Show this message and exit.
-
-**Commands**:
-
-* `create`: Create a deviation on an issue.
-* `update`: Partially update an existing deviation.
-
-### `pfy deviations create`
-
-Create a deviation on an issue.
-
-**Usage**:
-
-```console
-$ pfy deviations create [OPTIONS]
-```
-
-**Options**:
-
-* `--issue-id TEXT`: Issue to attach the deviation to  [required]
-* `--body-file PATH`: JSON body file
-* `--stdin`: Read the JSON body from stdin
-* `--json`: Emit JSON instead of text.
-* `--help`: Show this message and exit.
-
-### `pfy deviations update`
-
-Partially update an existing deviation.
-
-**Usage**:
-
-```console
-$ pfy deviations update [OPTIONS]
-```
-
-**Options**:
-
-* `--issue-id TEXT`: Issue the deviation belongs to  [required]
-* `--deviation-id TEXT`: Deviation to update  [required]
-* `--body-file PATH`: JSON body file
-* `--stdin`: Read the JSON body from stdin
-* `--json`: Emit JSON instead of text.
-* `--help`: Show this message and exit.
-
-## `pfy evidence`
-
-Evidence sets + validator coverage.
-
-**Usage**:
-
-```console
-$ pfy evidence [OPTIONS] COMMAND [ARGS]...
-```
-
-**Options**:
-
-* `--help`: Show this message and exit.
-
-**Commands**:
-
-* `coverage`: Evidence sets with no associated validator...
-
-### `pfy evidence coverage`
-
-Evidence sets with no associated validator (+ optional orphan validators).
-
-A validator counts as associated when it has run against one of the evidence
-set's artifacts — the only association the API exposes. Evidence with no
-artifacts yet is reported separately (a validator may be attached but unrun).
-
-**Usage**:
-
-```console
-$ pfy evidence coverage [OPTIONS]
-```
-
-**Options**:
-
-* `--evidence-ref TEXT`: Limit to evidence referenceId (repeatable)
-* `--orphans / --no-orphans`: Also flag catalog validators not used by any evidence set  [default: orphans]
-* `--json`: Emit JSON instead of text.
-* `--help`: Show this message and exit.
+* `programs`: Programs/projects.
+* `issues`: Issues + inline deviations.
+* `deviations`: Create/update deviations.
+* `evidence`: Evidence sets + validator coverage.
+* `api`: Raw request to any endpoint.
 
 ## `pfy vuln`
 
-CVSS scoring + deviation sync (porcelain).
+CVSS scoring + deviation sync.
 
 **Usage**:
 
@@ -399,4 +172,231 @@ $ pfy validator triage [OPTIONS]
 * `--evidence-ref TEXT`: limit to evidence referenceId (repeatable)
 * `--limit INTEGER`: cap the number analyzed
 * `--json`: Emit JSON instead of text.
+* `--help`: Show this message and exit.
+
+## `pfy programs`
+
+Programs/projects.
+
+**Usage**:
+
+```console
+$ pfy programs [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `list`: List programs: id and name.
+* `get`: Get one program by id.
+
+### `pfy programs list`
+
+List programs: id and name.
+
+**Usage**:
+
+```console
+$ pfy programs list [OPTIONS]
+```
+
+**Options**:
+
+* `--json`: Emit JSON instead of text.
+* `--help`: Show this message and exit.
+
+### `pfy programs get`
+
+Get one program by id.
+
+**Usage**:
+
+```console
+$ pfy programs get [OPTIONS] PROGRAM_ID
+```
+
+**Arguments**:
+
+* `PROGRAM_ID`: Program id  [required]
+
+**Options**:
+
+* `--json`: Emit JSON instead of text.
+* `--help`: Show this message and exit.
+
+## `pfy issues`
+
+Issues + inline deviations.
+
+**Usage**:
+
+```console
+$ pfy issues [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `list`: List issues.
+* `get`: Get one issue (with its inline deviations)...
+
+### `pfy issues list`
+
+List issues. Needs a scope: program id (or PROGRAM_ID), poam id, or cve id.
+
+**Usage**:
+
+```console
+$ pfy issues list [OPTIONS]
+```
+
+**Options**:
+
+* `--program-id TEXT`: Defaults to PROGRAM_ID
+* `--poam-id TEXT`: POA&amp;M id (repeatable)
+* `--cve-id TEXT`: CVE id (repeatable)
+* `--kev`: Only KEV vulnerabilities
+* `--has-cves`: Only issues carrying CVE ids
+* `--json`: Emit JSON instead of text.
+* `--help`: Show this message and exit.
+
+### `pfy issues get`
+
+Get one issue (with its inline deviations) by id.
+
+**Usage**:
+
+```console
+$ pfy issues get [OPTIONS] ISSUE_ID
+```
+
+**Arguments**:
+
+* `ISSUE_ID`: Issue id  [required]
+
+**Options**:
+
+* `--json`: Emit JSON instead of text.
+* `--help`: Show this message and exit.
+
+## `pfy deviations`
+
+Create/update deviations.
+
+**Usage**:
+
+```console
+$ pfy deviations [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `create`: Create a deviation on an issue.
+* `update`: Partially update an existing deviation.
+
+### `pfy deviations create`
+
+Create a deviation on an issue.
+
+**Usage**:
+
+```console
+$ pfy deviations create [OPTIONS]
+```
+
+**Options**:
+
+* `--issue-id TEXT`: Issue to attach the deviation to  [required]
+* `--body-file PATH`: JSON body file
+* `--stdin`: Read the JSON body from stdin
+* `--json`: Emit JSON instead of text.
+* `--help`: Show this message and exit.
+
+### `pfy deviations update`
+
+Partially update an existing deviation.
+
+**Usage**:
+
+```console
+$ pfy deviations update [OPTIONS]
+```
+
+**Options**:
+
+* `--issue-id TEXT`: Issue the deviation belongs to  [required]
+* `--deviation-id TEXT`: Deviation to update  [required]
+* `--body-file PATH`: JSON body file
+* `--stdin`: Read the JSON body from stdin
+* `--json`: Emit JSON instead of text.
+* `--help`: Show this message and exit.
+
+## `pfy evidence`
+
+Evidence sets + validator coverage.
+
+**Usage**:
+
+```console
+$ pfy evidence [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `coverage`: Evidence sets with no associated validator...
+
+### `pfy evidence coverage`
+
+Evidence sets with no associated validator (+ optional orphan validators).
+
+A validator counts as associated when it has run against one of the evidence
+set's artifacts — the only association the API exposes. Evidence with no
+artifacts yet is reported separately (a validator may be attached but unrun).
+
+**Usage**:
+
+```console
+$ pfy evidence coverage [OPTIONS]
+```
+
+**Options**:
+
+* `--evidence-ref TEXT`: Limit to evidence referenceId (repeatable)
+* `--orphans / --no-orphans`: Also flag catalog validators not used by any evidence set  [default: orphans]
+* `--json`: Emit JSON instead of text.
+* `--help`: Show this message and exit.
+
+## `pfy api`
+
+Raw request to any endpoint.
+
+**Usage**:
+
+```console
+$ pfy api [OPTIONS] METHOD PATH
+```
+
+**Arguments**:
+
+* `METHOD`: HTTP method, e.g. GET, POST, PATCH  [required]
+* `PATH`: Path relative to the base URL, e.g. 'issues'  [required]
+
+**Options**:
+
+* `-p, --param TEXT`: Query param key=value (repeatable)
+* `--stdin`: Read a JSON request body from stdin
 * `--help`: Show this message and exit.
