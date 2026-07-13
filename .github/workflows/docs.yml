@@ -10,7 +10,12 @@ permissions:
 
 jobs:
   # Fail if the committed CLI reference is stale, and if the site won't build.
+  # TEMPORARILY DISABLED 2026-07-13: installing pfy pulls the private
+  # paramify-sdk over git, which needs the CI GitHub App that isn't set up yet.
+  # Re-enable by removing this `if: false` once the SDK_APP_ID / SDK_APP_PRIVATE_KEY
+  # secrets exist. The deploy job below `needs: check`, so it skips too meanwhile.
   check:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
