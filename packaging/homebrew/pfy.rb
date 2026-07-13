@@ -12,14 +12,12 @@ class Pfy < Formula
   homepage "https://github.com/21tmccauley/pfy"
   version "VERSION_PLACEHOLDER"
 
+  # arm64 only — GitHub retired the Intel macOS runners, so no x86_64 bottle is
+  # built. Add an on_intel branch back here (with its build + sha) if that changes.
   on_macos do
     on_arm do
       url "https://github.com/21tmccauley/pfy/releases/download/vVERSION_PLACEHOLDER/pfy-macos-arm64.tar.gz"
       sha256 "SHA_ARM_PLACEHOLDER"
-    end
-    on_intel do
-      url "https://github.com/21tmccauley/pfy/releases/download/vVERSION_PLACEHOLDER/pfy-macos-x86_64.tar.gz"
-      sha256 "SHA_INTEL_PLACEHOLDER"
     end
   end
 
