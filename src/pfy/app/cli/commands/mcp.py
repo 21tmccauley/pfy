@@ -11,10 +11,37 @@ CLI stays dependency-light and the install hint is friendly if it's missing.
 from __future__ import annotations
 
 import importlib.util
+from typing import TYPE_CHECKING
 
 import typer
 
 from pfy.app.cli.context import Context
+
+if TYPE_CHECKING:
+    from pfy.app.settings import Settings
+
+
+def _startup_notice(settings: Settings) -> str:
+    """The banner shown when the server starts.
+
+    Emitted on **stderr**, never stdout: stdio is the MCP transport, so any bytes
+    on stdout that aren't protocol frames corrupt the stream. The MCP spec lets a
+    server log to stderr, so a client that launches ``pfy mcp`` sees this in its
+    logs and a human running it sees it in the terminal. Without it the command
+    looks like a hung shell — it's actually blocked waiting for a client to speak.
+    """
+    url = settings.paramify_url
+    env = "stage" if "stage." in url else "prod" if "app.paramify" in url else "custom"
+    key = "set" if settings.paramify_api_key else "NOT set — export PARAMIFY_API_KEY"
+    return "\n".join(
+        [
+            "pfy MCP server — ready, speaking MCP over stdio.",
+            f"  paramify : {url} ({env})",
+            f"  api key  : {key}",
+            "  Not an interactive prompt — waiting for an MCP client on stdin/stdout.",
+            "  Press Ctrl-C to stop.",
+        ]
+    )
 
 
 def mcp(ctx: typer.Context) -> None:
@@ -31,4 +58,6 @@ def mcp(ctx: typer.Context) -> None:
     from pfy.app.mcp_server import serve
 
     c: Context = ctx.obj
+    # stderr only — stdout is the protocol channel from here on.
+    typer.echo(_startup_notice(c.settings), err=True)
     serve(c)

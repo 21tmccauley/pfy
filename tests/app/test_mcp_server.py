@@ -1,5 +1,6 @@
-"""MCP delivery wiring — the tools are registered with usable schemas. Skipped
-when the optional ``mcp`` extra isn't installed (``pip install 'pfy[mcp]'``)."""
+"""MCP delivery wiring — the tools are registered with usable schemas, and the
+`pfy mcp` command announces startup on stderr. Skipped when the optional ``mcp``
+extra isn't installed (``pip install 'pfy[mcp]'``)."""
 
 import asyncio
 from types import SimpleNamespace
@@ -9,6 +10,8 @@ import pytest
 pytest.importorskip("mcp")
 
 from pfy.app import mcp_server  # noqa: E402  (import after importorskip)
+from pfy.app.cli.commands import mcp as mcp_cmd  # noqa: E402
+from pfy.app.settings import Settings  # noqa: E402
 
 
 def _tools():
@@ -52,3 +55,27 @@ def test_adjust_program_defaults_to_a_dry_run():
 def test_issues_list_scoping_params():
     props = _tools()["issues_list"].inputSchema["properties"]
     assert set(props) == {"program_id", "poam_ids", "cve_ids", "kev", "has_cves"}
+
+
+def test_startup_notice_flags_env_and_api_key():
+    prod = mcp_cmd._startup_notice(
+        Settings(paramify_url="https://app.paramify.com/api/v0", paramify_api_key="x")
+    )
+    assert "(prod)" in prod and "stdio" in prod
+
+    missing = mcp_cmd._startup_notice(
+        Settings(paramify_url="https://stage.paramify.com/api/v0", paramify_api_key=None)
+    )
+    assert "(stage)" in missing and "NOT set" in missing
+
+
+def test_mcp_command_announces_on_stderr_not_stdout(monkeypatch, capsys):
+    # serve() blocks on stdio forever; replace it so the command returns. Then the
+    # banner must land on stderr — stdout is the MCP transport and must stay clean.
+    monkeypatch.setattr("pfy.app.mcp_server.serve", lambda ctx: None)
+    fake_ctx = SimpleNamespace(settings=Settings(paramify_api_key="x"))
+    mcp_cmd.mcp(SimpleNamespace(obj=fake_ctx))
+
+    captured = capsys.readouterr()
+    assert "MCP server" in captured.err
+    assert captured.out == ""
