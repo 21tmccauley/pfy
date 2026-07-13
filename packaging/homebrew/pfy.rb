@@ -4,9 +4,10 @@
 #
 # Install:  brew install 21tmccauley/tap/pfy
 #
-# The bottle is a PyInstaller onefile binary with the interpreter and every
+# The bottle is a PyInstaller onedir bundle with the interpreter and every
 # dependency (incl. the private paramify-sdk) baked in — no Python, no auth on the
-# device. It's arch-specific because pydantic-core ships a native wheel.
+# device. It's arch-specific because pydantic-core ships a native wheel. onedir
+# (not onefile) so startup doesn't pay a re-extract + Gatekeeper re-scan each run.
 class Pfy < Formula
   desc "Paramify FDE CLI — porcelain workflows + plumbing primitives"
   homepage "https://github.com/21tmccauley/pfy"
@@ -21,8 +22,11 @@ class Pfy < Formula
     end
   end
 
+  # onedir bundle: the executable needs its sibling _internal/ dir, so install the
+  # whole thing into libexec and expose just the launcher on PATH via a symlink.
   def install
-    bin.install "pfy"
+    libexec.install Dir["*"]
+    bin.install_symlink libexec/"pfy" => "pfy"
   end
 
   test do
