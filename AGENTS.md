@@ -8,8 +8,8 @@
 1. **Shell out** to the CLI (`pfy …`). Best for one-off steps and composing with
    other tools.
 2. **MCP** — run `pfy mcp` (stdio) and call its tools. Best when you're an
-   MCP-capable agent and want typed tools instead of parsing text. Requires the
-   optional extra: `pip install 'pfy[mcp]'`.
+   MCP-capable agent and want typed tools instead of parsing text. Bundled in the
+   Homebrew binary; from a source checkout, `pip install -e '.[mcp]'`.
 
 Both call the *same* service functions, so a workflow behaves identically either way.
 

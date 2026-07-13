@@ -50,8 +50,8 @@ def mcp(ctx: typer.Context) -> None:
     # failed import of mcp_server) to give a clean install hint when it's absent.
     if importlib.util.find_spec("mcp") is None:
         typer.echo(
-            "Error: MCP support isn't installed. Install it with:\n"
-            "  pip install 'pfy[mcp]'",
+            "Error: MCP support isn't installed.\n"
+            "From a source checkout, install the extra:  pip install -e '.[mcp]'",
             err=True,
         )
         raise typer.Exit(1)

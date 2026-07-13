@@ -83,7 +83,7 @@ def test_mcp_command_hints_when_extra_missing(monkeypatch):
     )
     result = runner.invoke(main.app, ["mcp"])
     assert result.exit_code == 1
-    assert "pip install 'pfy[mcp]'" in result.output
+    assert "pip install -e '.[mcp]'" in result.output
 
 
 def test_triage_empty_run_exits_zero(monkeypatch):
