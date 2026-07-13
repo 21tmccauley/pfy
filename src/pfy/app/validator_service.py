@@ -14,6 +14,7 @@ with the plain (unauthed) http client, not the SDK. All reasoning is pure ``core
 
 from __future__ import annotations
 
+import dataclasses
 import json
 from pathlib import Path
 from typing import Any
@@ -25,6 +26,29 @@ from pfy.core.validator import bundle as bundle_mod
 from pfy.core.validator.detect import FailingRecord, failing_records
 from pfy.core.validator.models import Bundle, TriageResult
 from pfy.core.validator.triage import triage
+
+#: Most-severe first. Shared by every delivery (CLI, MCP) so triage output is
+#: ordered identically no matter who calls it.
+SEVERITY_ORDER = {"high": 0, "medium": 1, "low": 2}
+
+
+def sort_by_severity(results: list[TriageResult]) -> list[TriageResult]:
+    """Order triage results high -> medium -> low (unknown severities last)."""
+    return sorted(results, key=lambda t: SEVERITY_ORDER.get(t.severity, 9))
+
+
+def triage_payload(result: TriageResult, *, compact: bool = False) -> dict[str, Any]:
+    """Serialize a ``TriageResult`` to a plain JSON-ready dict.
+
+    ``compact`` drops the long ``what_it_checks`` narrative — cheaper for an agent
+    that only needs the verdict, why, what-changed, and remediation.
+    """
+    data = dataclasses.asdict(result)
+    data["classification"] = result.classification.value
+    data["severity"] = result.severity.value
+    if compact:
+        data.pop("what_it_checks", None)
+    return data
 
 
 def find_failing(

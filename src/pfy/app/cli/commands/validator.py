@@ -21,8 +21,6 @@ from pfy.core.validator.replay import replay as run_replay
 
 app = typer.Typer(no_args_is_help=True)
 
-_SEVERITY_ORDER = {"high": 0, "medium": 1, "low": 2}
-
 
 def _read(path: Path) -> tuple[str, Any]:
     raw = path.read_text()
@@ -92,11 +90,15 @@ def triage(
         None, "--evidence-ref", help="[live] limit to evidence referenceId (repeatable)"
     ),
     limit: int | None = typer.Option(None, "--limit", help="[live] cap the number analyzed"),
+    compact: bool = typer.Option(
+        False, "--compact", help="Omit the long what_it_checks narrative (smaller JSON for agents)"
+    ),
     json_out: output.JSONOption = False,
 ) -> None:
     """Triage failing validators: find -> bundle -> baseline analysis.
 
     Live API by default; pass --validator and --failing to triage a local example.
+    Exits 0 on a successful run (even with nothing failing); non-zero only on error.
     """
     c: Context = ctx.obj
     if validator or failing:
@@ -107,9 +109,11 @@ def triage(
         results = validator_service.triage_live(
             c.paramify, c.http, evidence_refs=evidence_ref or None, limit=limit
         )
-    results.sort(key=lambda t: _SEVERITY_ORDER.get(t.severity, 9))
-    output.emit(results, as_json=json_out, human=_triage_human)
-    raise typer.Exit(0 if results else 1)
+    results = validator_service.sort_by_severity(results)
+    if output.json_enabled(json_out):
+        output.emit_json([validator_service.triage_payload(r, compact=compact) for r in results])
+    else:
+        _triage_human(results)
 
 
 def _replay_human(r: RegexReplay) -> None:

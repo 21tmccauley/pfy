@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import dataclasses
 import json
+import os
 from collections.abc import Callable, Sequence
 from enum import Enum
 from typing import Annotated, Any
@@ -24,26 +25,47 @@ import typer
 #: command signature instead of re-declaring the option each time.
 JSONOption = Annotated[bool, typer.Option("--json", help="Emit JSON instead of text.")]
 
+_TRUTHY = {"1", "true", "yes", "on"}
 
-def _jsonable(obj: Any) -> Any:
-    """Coerce dataclasses / pydantic models / enums into JSON-serializable data."""
+
+def json_enabled(flag: bool) -> bool:
+    """Whether to emit JSON: the ``--json`` flag, or ``PFY_JSON`` in the environment.
+
+    The env var lets an agent (or a CI job) opt into machine output once for the
+    whole session instead of threading ``--json`` through every call.
+    """
+    return flag or os.environ.get("PFY_JSON", "").strip().lower() in _TRUTHY
+
+
+def jsonable(obj: Any) -> Any:
+    """Coerce dataclasses / pydantic models / enums into JSON-serializable data.
+
+    Public because the MCP delivery (``app.mcp_server``) needs the *same* shaping
+    the CLI applies before ``--json`` output, so a tool's return value and the
+    equivalent command's JSON never drift.
+    """
     if isinstance(obj, list):
-        return [_jsonable(x) for x in obj]
+        return [jsonable(x) for x in obj]
     if isinstance(obj, Enum):
         return obj.value
     if hasattr(obj, "model_dump"):  # pydantic model
         return obj.model_dump(exclude_none=True)
     if dataclasses.is_dataclass(obj) and not isinstance(obj, type):
-        return _jsonable(dataclasses.asdict(obj))
+        return jsonable(dataclasses.asdict(obj))
     if isinstance(obj, dict):
-        return {k: _jsonable(v) for k, v in obj.items()}
+        return {k: jsonable(v) for k, v in obj.items()}
     return obj
 
 
+def emit_json(data: Any) -> None:
+    """Print ``data`` as indented, JSON-serializable output."""
+    typer.echo(json.dumps(jsonable(data), indent=2, default=str))
+
+
 def emit(data: Any, *, as_json: bool, human: Callable[[Any], None]) -> None:
-    """Print ``data`` as indented JSON (``--json``) or via the ``human`` callback."""
-    if as_json:
-        typer.echo(json.dumps(_jsonable(data), indent=2, default=str))
+    """Print ``data`` as indented JSON (``--json``/``PFY_JSON``) or via ``human``."""
+    if json_enabled(as_json):
+        emit_json(data)
     else:
         human(data)
 

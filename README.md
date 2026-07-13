@@ -4,6 +4,17 @@ The Paramify FDE CLI. One install, one auth surface, and every headless workflow
 we've built behind a single discoverable command — instead of a drawer of
 disjointed scripts.
 
+## Install
+
+```bash
+brew install paramify/tap/pfy
+```
+
+A self-contained binary — no Python, no repo access needed. Then set up auth
+(`cp .env.example .env`, or export `PARAMIFY_API_KEY`) per [setup](docs/setup.md),
+and check it with `pfy programs list`. To hack on pfy instead, see [Develop](#develop).
+Cutting a release is documented in [RELEASING.md](RELEASING.md).
+
 `pfy` is the **`app/` delivery** at the top of the FDE stack: it depends on the
 pinned [`paramify-sdk`](https://github.com/paramify/paramify-sdk) for transport,
 and each workflow's real logic lives in a pure `core/` capability. The CLI is a
@@ -38,9 +49,22 @@ pfy api GET evidence --param projectId=PRJ-1
 ## Output contract (why scripting works)
 
 Every command that returns data emits through one place (`app/output.py`):
-human-readable, tab-separated by default; add `--json` for machine-readable
-output with stable field names. Bodies for writes can be piped in via `--stdin`.
-That single contract is what makes the plumbing tier composable.
+human-readable, tab-separated by default; add `--json` (or set `PFY_JSON=1` once)
+for machine-readable output with stable field names. Bodies for writes can be
+piped in via `--stdin`. That single contract is what makes the plumbing tier
+composable.
+
+## For AI agents
+
+pfy is built to be driven by an agent, two ways over the same core:
+
+- **Shell out** to the CLI and parse `--json` (or `PFY_JSON=1`).
+- **MCP** — `pfy mcp` serves the same workflows as MCP tools over stdio
+  (`pip install 'pfy[mcp]'`). Register it with your agent host as command `pfy`,
+  args `["mcp"]`.
+
+Agent-facing usage — the output/exit-code contract and when to use each tier —
+lives in [`AGENTS.md`](AGENTS.md) (Claude Code reads it via `CLAUDE.md`).
 
 ## Layout
 
