@@ -10,12 +10,7 @@ permissions:
 
 jobs:
   # Fail if the committed CLI reference is stale, and if the site won't build.
-  # TEMPORARILY DISABLED 2026-07-13: installing pfy pulls the private
-  # paramify-sdk over git, which needs the CI GitHub App that isn't set up yet.
-  # Re-enable by removing this `if: false` once the SDK_APP_ID / SDK_APP_PRIVATE_KEY
-  # secrets exist. The deploy job below `needs: check`, so it skips too meanwhile.
   check:
-    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,10 +18,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      # paramify-sdk is a private repo — give Actions a read token so pip can
-      # install the git-pinned dependency. Store it as a repo/org secret.
-      # - name: Auth to private SDK
-      #   run: git config --global url."https://x-access-token:${{ secrets.SDK_TOKEN }}@github.com/".insteadOf "https://github.com/"
+      # paramify-sdk is a private repo — SDK_TOKEN (a PAT with read on
+      # paramify/paramify-sdk) lets pip clone the git-pinned dependency.
+      - name: Auth to private SDK
+        run: git config --global url."https://x-access-token:${{ secrets.SDK_TOKEN }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install
         run: |
@@ -59,8 +54,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      # - name: Auth to private SDK
-      #   run: git config --global url."https://x-access-token:${{ secrets.SDK_TOKEN }}@github.com/".insteadOf "https://github.com/"
+      - name: Auth to private SDK
+        run: git config --global url."https://x-access-token:${{ secrets.SDK_TOKEN }}@github.com/".insteadOf "https://github.com/"
       - name: Install
         run: |
           python -m pip install --upgrade pip
