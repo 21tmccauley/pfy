@@ -4,6 +4,7 @@ contract without hitting the API.
 """
 
 import json
+import re
 from types import SimpleNamespace
 
 import pytest
@@ -14,6 +15,19 @@ import pfy.app.cli.main as main
 from pfy.app.settings import Settings
 
 runner = CliRunner()
+
+_ANSI = re.compile(r"\x1b\[[0-9;]*m")
+
+
+def _plain(text: str) -> str:
+    """Strip ANSI color codes so assertions match regardless of rich styling.
+
+    Rich's option highlighter splits a flag like ``--program-id`` into separately
+    styled fragments (``-``, ``-program``, ``-id``); removing the codes reassembles
+    it. CI renders errors with color, local pytest usually doesn't — normalizing
+    here makes the two agree.
+    """
+    return _ANSI.sub("", text)
 
 
 class FakeParamify:
@@ -117,9 +131,11 @@ def test_issues_list_without_scope_is_clean_usage_error(monkeypatch):
     monkeypatch.setattr(main, "build_context", _fake_context)
     result = runner.invoke(main.app, ["issues", "list"])
     assert result.exit_code == 2
-    # CLI vocabulary in the message, and no leaked traceback.
-    assert "--program-id" in result.output
-    assert "Traceback" not in result.output
+    # CLI vocabulary in the message, and no leaked traceback. Strip ANSI first:
+    # under color, rich splits --program-id into styled fragments.
+    out = _plain(result.output)
+    assert "--program-id" in out
+    assert "Traceback" not in out
 
 
 def _run_expecting_exit(monkeypatch, argv, raiser):

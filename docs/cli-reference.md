@@ -22,6 +22,7 @@ $ pfy [OPTIONS] COMMAND [ARGS]...
 * `issues`: Issues + inline deviations.
 * `deviations`: Create/update deviations.
 * `evidence`: Evidence sets + validator coverage.
+* `mcp`: Serve pfy workflows to an AI agent (MCP,...
 * `api`: Raw request to any endpoint.
 
 ## `pfy vuln`
@@ -156,6 +157,7 @@ $ pfy validator diff [OPTIONS]
 Triage failing validators: find -&gt; bundle -&gt; baseline analysis.
 
 Live API by default; pass --validator and --failing to triage a local example.
+Exits 0 on a successful run (even with nothing failing); non-zero only on error.
 
 **Usage**:
 
@@ -171,6 +173,7 @@ $ pfy validator triage [OPTIONS]
 * `--evidence-name TEXT`: evidence name
 * `--evidence-ref TEXT`: limit to evidence referenceId (repeatable)
 * `--limit INTEGER`: cap the number analyzed
+* `--compact`: Omit the long what_it_checks narrative (smaller JSON for agents)
 * `--json`: Emit JSON instead of text.
 * `--help`: Show this message and exit.
 
@@ -378,6 +381,20 @@ $ pfy evidence coverage [OPTIONS]
 * `--evidence-ref TEXT`: Limit to evidence referenceId (repeatable)
 * `--orphans / --no-orphans`: Also flag catalog validators not used by any evidence set  [default: orphans]
 * `--json`: Emit JSON instead of text.
+* `--help`: Show this message and exit.
+
+## `pfy mcp`
+
+Serve pfy workflows to an AI agent (MCP, stdio).
+
+**Usage**:
+
+```console
+$ pfy mcp [OPTIONS]
+```
+
+**Options**:
+
 * `--help`: Show this message and exit.
 
 ## `pfy api`
