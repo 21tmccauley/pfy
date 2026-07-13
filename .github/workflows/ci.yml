@@ -5,7 +5,12 @@ on:
   pull_request:
 
 jobs:
+  # TEMPORARILY DISABLED 2026-07-13: installing pfy pulls the private
+  # paramify-sdk over git, which needs the CI GitHub App that isn't set up yet.
+  # Re-enable by removing this `if: false` once the SDK_APP_ID / SDK_APP_PRIVATE_KEY
+  # secrets exist and the "Auth to private SDK" step below is wired up.
   checks:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
