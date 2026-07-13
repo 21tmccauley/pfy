@@ -5,12 +5,7 @@ on:
   pull_request:
 
 jobs:
-  # TEMPORARILY DISABLED 2026-07-13: installing pfy pulls the private
-  # paramify-sdk over git, which needs the CI GitHub App that isn't set up yet.
-  # Re-enable by removing this `if: false` once the SDK_APP_ID / SDK_APP_PRIVATE_KEY
-  # secrets exist and the "Auth to private SDK" step below is wired up.
   checks:
-    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,10 +13,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      # paramify-sdk is a private repo. Give Actions a read token so pip can
-      # install the git-pinned dependency. Store it as a repo/org secret.
-      # - name: Auth to private SDK
-      #   run: git config --global url."https://x-access-token:${{ secrets.SDK_TOKEN }}@github.com/".insteadOf "https://github.com/"
+      # paramify-sdk is a private repo. SDK_TOKEN (a PAT with read on
+      # paramify/paramify-sdk) lets pip clone the git-pinned dependency.
+      - name: Auth to private SDK
+        run: git config --global url."https://x-access-token:${{ secrets.SDK_TOKEN }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install
         run: |

@@ -85,7 +85,7 @@ jobs:
       - name: Check out the tap and commit the formula
         uses: actions/checkout@v4
         with:
-          repository: paramify/homebrew-tap
+          repository: 21tmccauley/homebrew-tap
           token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
           path: tap
 
