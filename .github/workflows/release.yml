@@ -28,13 +28,11 @@ jobs:
 
   build:
     needs: create-release
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - runner: macos-14 # Apple Silicon → arm64
-          - runner: macos-13 # Intel → x86_64
-    runs-on: ${{ matrix.runner }}
+    # arm64 only: GitHub has retired the Intel (macos-13) hosted runners, so an
+    # x86_64 build can't be produced here. Re-add a macos-13 matrix entry (and the
+    # on_intel branch in the formula + its sha in bump-tap) if Intel is ever needed
+    # again — e.g. via a self-hosted Intel runner.
+    runs-on: macos-14 # Apple Silicon → arm64
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -72,13 +70,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           version="${GITHUB_REF_NAME#v}"
-          gh release download "${GITHUB_REF_NAME}" --pattern 'pfy-macos-*.tar.gz' --dir dist
+          gh release download "${GITHUB_REF_NAME}" --pattern 'pfy-macos-arm64.tar.gz' --dir dist
           sha_arm="$(shasum -a 256 dist/pfy-macos-arm64.tar.gz | awk '{print $1}')"
-          sha_intel="$(shasum -a 256 dist/pfy-macos-x86_64.tar.gz | awk '{print $1}')"
           sed \
             -e "s/VERSION_PLACEHOLDER/${version}/g" \
             -e "s/SHA_ARM_PLACEHOLDER/${sha_arm}/g" \
-            -e "s/SHA_INTEL_PLACEHOLDER/${sha_intel}/g" \
             packaging/homebrew/pfy.rb > /tmp/pfy.rb
           echo "Rendered formula:"; cat /tmp/pfy.rb
 
