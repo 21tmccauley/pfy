@@ -30,8 +30,13 @@ def list_(
 ) -> None:
     """List issues. Needs a scope: program id (or PROGRAM_ID), poam id, or cve id."""
     c: Context = ctx.obj
+    program = program_id or c.settings.program_id
+    if not (program or poam_id or cve_id):
+        raise typer.BadParameter(
+            "provide a scope: --program-id (or set PROGRAM_ID), --poam-id, or --cve-id"
+        )
     issues = c.paramify.get_issues(
-        project_id=program_id or c.settings.program_id,
+        project_id=program,
         poam_ids=poam_id or None,
         cve_ids=cve_id or None,
         kev=kev or None,

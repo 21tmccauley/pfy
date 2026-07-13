@@ -16,9 +16,9 @@ class Row:
 
 
 def test_jsonable_dataclass_enum_and_nesting():
-    assert output._jsonable(Row(1)) == {"id": 1, "name": None}
-    assert output._jsonable(Color.RED) == "red"
-    assert output._jsonable([Row(1, "y")]) == [{"id": 1, "name": "y"}]
+    assert output.jsonable(Row(1)) == {"id": 1, "name": None}
+    assert output.jsonable(Color.RED) == "red"
+    assert output.jsonable([Row(1, "y")]) == [{"id": 1, "name": "y"}]
 
 
 def test_emit_json(capsys):

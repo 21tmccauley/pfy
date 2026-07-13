@@ -24,6 +24,17 @@ docs = [
     # Cap below 2.0: the 9.x line is MIT-licensed; 2.0 moves to a new license.
     "mkdocs-material>=9.5,<10",
 ]
+# Release build: `pip install -e ".[build]"`, then `scripts/build-binary.sh`
+# produces the self-contained binary the Homebrew formula ships.
+build = [
+    "pyinstaller>=6.0",
+]
+# MCP delivery: `pip install -e ".[mcp]"`, then `pfy mcp` serves the same
+# workflows to an AI agent over stdio. Kept optional so the base CLI (and the
+# shipped binary) stay dependency-light — `pfy mcp` imports it lazily.
+mcp = [
+    "mcp>=1.2",
+]
 
 [project.scripts]
 pfy = "pfy.app.cli.main:run"
@@ -69,4 +80,10 @@ no_implicit_optional = true
 # keeps mypy from hard-failing in an env where it isn't installed.
 [[tool.mypy.overrides]]
 module = "paramify_sdk.*"
+ignore_missing_imports = true
+
+# The `mcp` extra is optional (imported lazily by `pfy mcp`); keep mypy green in
+# an env that installs pfy without it.
+[[tool.mypy.overrides]]
+module = "mcp.*"
 ignore_missing_imports = true

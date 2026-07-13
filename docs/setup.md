@@ -2,6 +2,19 @@
 
 ## Install
 
+Most people just want the CLI:
+
+```bash
+brew install paramify/tap/pfy
+pfy --help
+```
+
+That's a self-contained binary (interpreter + all dependencies, including the
+private SDK, baked in) — no Python and no repo access required. Upgrade later with
+`brew upgrade pfy`.
+
+### From source (to develop pfy)
+
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"          # needs git auth for the private SDK (gh auth setup-git)
