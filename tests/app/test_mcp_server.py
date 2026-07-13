@@ -1,6 +1,6 @@
 """MCP delivery wiring — the tools are registered with usable schemas, and the
 `pfy mcp` command announces startup on stderr. Skipped when the optional ``mcp``
-extra isn't installed (``pip install 'pfy[mcp]'``)."""
+extra isn't installed (``pip install -e '.[mcp]'``)."""
 
 import asyncio
 from types import SimpleNamespace

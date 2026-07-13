@@ -48,7 +48,8 @@ jobs:
       - name: Install pfy + build tooling
         run: |
           python -m pip install --upgrade pip
-          pip install ".[build]"
+          # [mcp] too, so the `pfy mcp` server is bundled into the binary.
+          pip install ".[build,mcp]"
 
       - name: Build the self-contained binary
         run: ./scripts/build-binary.sh

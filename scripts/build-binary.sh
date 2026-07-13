@@ -36,6 +36,7 @@ pyinstaller \
   --collect-submodules paramify_sdk \
   --collect-submodules pydantic \
   --collect-submodules pydantic_core \
+  --collect-submodules mcp \
   src/pfy/__main__.py
 
 # Smoke-test the frozen binary before we ship it — proves the interpreter,

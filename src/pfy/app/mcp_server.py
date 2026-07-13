@@ -7,8 +7,9 @@ each tool calls the identical ``validator_service`` / ``evidence_service`` /
 lives here — only the tool surface and its schemas — so the CLI and an AI agent
 can never drift.
 
-Requires the optional ``mcp`` extra (``pip install 'pfy[mcp]'``); ``pfy mcp``
-imports this module lazily and prints an install hint if it's missing.
+Requires the optional ``mcp`` extra (bundled in the release binary; from a source
+checkout, ``pip install -e '.[mcp]'``); ``pfy mcp`` imports this module lazily and
+prints an install hint if it's missing.
 """
 
 from __future__ import annotations

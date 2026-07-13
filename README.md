@@ -59,9 +59,9 @@ composable.
 pfy is built to be driven by an agent, two ways over the same core:
 
 - **Shell out** to the CLI and parse `--json` (or `PFY_JSON=1`).
-- **MCP** — `pfy mcp` serves the same workflows as MCP tools over stdio
-  (`pip install 'pfy[mcp]'`). Register it with your agent host as command `pfy`,
-  args `["mcp"]`.
+- **MCP** — `pfy mcp` serves the same workflows as MCP tools over stdio. The
+  Homebrew binary bundles it; from a source checkout, `pip install -e '.[mcp]'`.
+  Register it with your agent host as command `pfy`, args `["mcp"]`.
 
 Agent-facing usage — the output/exit-code contract and when to use each tier —
 lives in [`AGENTS.md`](AGENTS.md) (Claude Code reads it via `CLAUDE.md`).
